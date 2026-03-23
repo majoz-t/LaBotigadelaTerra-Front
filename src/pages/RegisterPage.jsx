@@ -34,11 +34,6 @@ const RegisterPage = () => {
       const response = await registerUser(form);
       console.log("Usuario creado:", response.data);
       navigate("/welcome");
-      // setForm({
-      //   name: "",
-      //   email: "",
-      //   password: "",
-      // });
     } catch (err) {
       const backendErrors = err.data?.errors;
 
@@ -56,35 +51,40 @@ const RegisterPage = () => {
         });
         setErrors(formattedErrors);
       } else {
-       const message = err.data?.message || "";
-      if (message.toLowerCase().includes("email")) {
-        navigate("/login");
-      } else {
-        setErrors({
-          general: message || "Error en el registro",
-        });
+        const message = err.data?.message || "";
+        if (message.toLowerCase().includes("email")) {
+          navigate("/login");
+        } else {
+          setErrors({
+            general: message || "Error en el registro",
+          });
+        }
       }
-    }
     } finally {
       setLoading(false);
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)]">
-      <div className="bg-[var(--color-background-card)] p-6 rounded-xl shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-font-semibold mb-6 text-center">
+    <>
+      <section className="min-h-screen flex flex-col items-center justify-start pt-12 mt-1 bg-[var(--color-background)] gap-6">
+        <h2 className="text-2xl text-[var(--color-primary)] text-center">
           Registro
         </h2>
-        <RegisterForm
-          form={form}
-          handleChange={handleChange}
-          handleSubmit={handleSubmit}
-          errors={errors}
-          loading={loading}
-        />
-      </div>
-    </div>
+
+        <div className="w-full max-w-sm">
+          <RegisterForm
+            form={form}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            errors={errors}
+            loading={loading}
+          />
+        </div>
+      </section>
+    </>
   );
 };
 
 export default RegisterPage;
+
+
