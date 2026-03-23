@@ -1,5 +1,7 @@
 import { useState } from "react";
 import RegisterForm from "../components/organisms/RegisterForm";
+import { registerUser } from "../services/authService";
+import validateRegister from "../utils/validationRegister";
 
 const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -13,28 +15,69 @@ const RegisterPage = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  // const validateForm = () => {
+  //   const newErrors = {};
+  //   if (!form.name.trim()) {
+  //     newErrors.name = "El nombre es obligatorio";
+  //   }
+  //   if (!form.email.includes("@")) {
+  //     newErrors.email = "Email inválido";
+  //   }
+  //   if (form.password.length < 6) {
+  //     newErrors.password = "Mínimo 6 caracteres";
+  //   }
+  //   return newErrors;
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateRegister(form);
+    if (Object.keys(validationErrors).lenght > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+    setLoading(true);
     try {
-      const response = await fetch("http://localhost:8080/api/v1/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(form)
+      const response = await registerUser(form);
+      console.log("Usuario creado:", response.data);
+      setForm({
+        name: "",
+        email: "",
+        password: "",
       });
-      if (!response.ok) {
-        throw new Error("Error en el registro");
+    } catch (err) {
+      const backendErrors = err.data?.errors;
+
+      if (backendErrors && Array.isArray(backendErrors)) {
+        const formattedErrors = {};
+        backendErrors.forEach((error) => {
+          const field = error.field;
+          const message = error.defaultMessage;
+
+          if (formattedErrors[field]) {
+            formattedErrors[field] += " " + message;
+          } else {
+            formattedErrors[field] = message;
+          }
+        });
+        setErrors(formattedErrors);
+      } else {
+        setErrors({
+          general: err.data?.message || "Error en el registro",
+        });
       }
-      const data = await response.json();
-      console.log("Usuario creado:", data);
-    } catch (error) {
-      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)]">
-      <div className="bg-[var(--color-background-card)] p-6 rounded-xl shadow-md w-full max-w-md"> 
+      <div className="bg-[var(--color-background-card)] p-6 rounded-xl shadow-md w-full max-w-md">
         <h2 className="text-2xl font-font-semibold mb-6 text-center">
           Registro
         </h2>
@@ -42,6 +85,8 @@ const RegisterPage = () => {
           form={form}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
+          errors={errors}
+          loading={loading}
         />
       </div>
     </div>
