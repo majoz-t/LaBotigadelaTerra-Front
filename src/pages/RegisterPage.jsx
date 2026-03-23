@@ -2,6 +2,7 @@ import { useState } from "react";
 import RegisterForm from "../components/organisms/RegisterForm";
 import { registerUser } from "../services/authService";
 import validateRegister from "../utils/validationRegister";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -18,20 +19,7 @@ const RegisterPage = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-
-  // const validateForm = () => {
-  //   const newErrors = {};
-  //   if (!form.name.trim()) {
-  //     newErrors.name = "El nombre es obligatorio";
-  //   }
-  //   if (!form.email.includes("@")) {
-  //     newErrors.email = "Email inválido";
-  //   }
-  //   if (form.password.length < 6) {
-  //     newErrors.password = "Mínimo 6 caracteres";
-  //   }
-  //   return newErrors;
-  // };
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,11 +33,12 @@ const RegisterPage = () => {
     try {
       const response = await registerUser(form);
       console.log("Usuario creado:", response.data);
-      setForm({
-        name: "",
-        email: "",
-        password: "",
-      });
+      navigate("/welcome");
+      // setForm({
+      //   name: "",
+      //   email: "",
+      //   password: "",
+      // });
     } catch (err) {
       const backendErrors = err.data?.errors;
 
@@ -67,10 +56,15 @@ const RegisterPage = () => {
         });
         setErrors(formattedErrors);
       } else {
+       const message = err.data?.message || "";
+      if (message.toLowerCase().includes("email")) {
+        navigate("/login");
+      } else {
         setErrors({
-          general: err.data?.message || "Error en el registro",
+          general: message || "Error en el registro",
         });
       }
+    }
     } finally {
       setLoading(false);
     }
