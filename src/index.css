@@ -32,7 +32,6 @@ body {
 
 h1 {
   font-family: var(--font-play);
-  font-size: 52px;
   line-height: 1.2;
   color: var(--color-primary);
 }
