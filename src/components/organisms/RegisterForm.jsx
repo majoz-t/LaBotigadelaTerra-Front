@@ -50,7 +50,7 @@ const RegisterForm = () => {
       const response = await registerUser(form);
       console.log("Usuario creado:", response.data);
       login(response.data);
-      navigate("/welcome");
+      navigate("/welcome", { state: { name: form.name }});
     } catch (err) {
       const backendErrors = err.response?.data?.errors;
 

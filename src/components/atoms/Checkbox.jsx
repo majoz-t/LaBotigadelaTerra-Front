@@ -20,7 +20,6 @@ const Checkbox = ({ label, name, value, checked, onChange }) => {
             checked:bg-[length:14px_14px]
             checked:bg-no-repeat
             checked:bg-center
-          
             transition-all duration-200 
             cursor-pointer
           "
