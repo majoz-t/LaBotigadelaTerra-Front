@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../src/components/atoms/Button";
 import logopcipal from "../../src/assets/images/logopcipal.png";

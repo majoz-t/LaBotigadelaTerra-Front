@@ -24,6 +24,7 @@ export const router = createBrowserRouter([
       { path: "welcome", element: <WelcomeUserPage /> },
       { path: "userdash", element: <DashboardUserPage /> },
       { path: "diagnostic", element: <DiagnosticFormPage /> },
+      { path: "diagnostic/:id", element: <DiagnosticFormPage /> },
       { path: "payment", element: <PaymentPage /> },
       { path: "successful", element: <SuccessfulPage /> },
     ],
